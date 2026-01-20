@@ -49,7 +49,6 @@ agents = generate_random_agents(map, agent_specs)
 env = GridWorld(height=GRID_H, width=GRID_W, map=map, agents=agents)
 
 # --------------------------
-
 # simulation
 # --------------------------
 evaluator = SimulationEvaluator(env, agents)
