@@ -39,15 +39,15 @@ class SimulationEvaluator:
 
             for pair, pos in current_collisions.items():
                 if pair not in self.prev_collisions:
-                    # 情况 1：第一次相遇
+                    # case 1: meet for the first time
                     self.num_collisions += 1
                 else:
                     prev_pos = self.prev_collisions[pair]
                     if pos != prev_pos:
-                        # 情况 2：仍在碰撞，但同步移动了
+                        # case 2: move together
                         self.num_collisions += 1
                     # else:
-                    # 情况 3：停在原地，不增加
+                    # case 3: meet and then both keep static
 
         self.prev_collisions = current_collisions
 
