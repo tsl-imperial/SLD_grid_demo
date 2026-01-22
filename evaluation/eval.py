@@ -1,5 +1,5 @@
 
-from agent import Agent
+from scenario.agent import Agent
 
 class SimulationEvaluator:
     """

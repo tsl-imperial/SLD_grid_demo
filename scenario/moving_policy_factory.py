@@ -1,10 +1,12 @@
+from scenario.goal_factory import Goal
+
 def move_towards_goal(agent):
     """
-    Simple deterministic movement towards goal.
-    Prioritize x movement first, then y.
+    simple deterministic movement towards goal
+    (prioritize x movement first, then y)
     """
     x, y = agent.pos
-    gx, gy = agent.goals[agent.current_goal_idx]
+    gx, gy = agent.goals[agent.current_goal_idx].pos
 
     if x < gx:
         return (1, 0)
@@ -17,3 +19,6 @@ def move_towards_goal(agent):
     else:
         return (0, 0)
     
+# -----------------
+# various policies
+# -----------------

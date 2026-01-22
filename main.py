@@ -1,15 +1,14 @@
-import numpy as np
 import matplotlib.pyplot as plt
 
 from config import GRID_H, GRID_W, TIMESTEPS, PAUSE_TIME
-from agent import Agent
-from env import GridWorld, CellType, StaticEntity
-from policy import move_towards_goal
-from render import Renderer
-from utils import generate_random_map
-from utils import generate_random_agents
+from scenario.env import GridWorld, CellType
+from scenario.moving_policy_factory import move_towards_goal
+from visualisation.render import Renderer
 
-from eval import SimulationEvaluator
+from utils.init_map import generate_random_map
+from utils.init_agent import generate_random_agents
+
+from evaluation.eval import SimulationEvaluator
 
 plt.ion()
 
@@ -22,8 +21,11 @@ layout = {
     CellType.DEPOT: {"count": 1, "size": (3, 3),},
     CellType.WORKSHOP: {"count": 1,"size": (2, 2),},
     CellType.PARKING: {"count": 1,"size": (2, 2),},
-    CellType.HAZARD: {"count": 3,"size": (1, 1),}
-    }
+    CellType.HAZARD: {"count": 1,"size": (1, 1),}
+    }    
+
+# TO DO !!!!!!!!!!!!!!!!!!! count = 0 --> wrong color when rendering
+
 
 map, entities = generate_random_map(GRID_H, GRID_W, layout)
 
@@ -34,8 +36,8 @@ map, entities = generate_random_map(GRID_H, GRID_W, layout)
 # create agent
 # --------------------------
 agent_specs = {
-    "worker": {"count": 2, "policy": move_towards_goal},
-    "vehicle": {"count": 1}
+    "worker": {"count": 1, "policy": move_towards_goal},
+    "vehicle": {"count": 0}
     }
 
 agents = generate_random_agents(map, agent_specs)
