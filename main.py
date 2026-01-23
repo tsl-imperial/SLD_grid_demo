@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from config import GRID_H, GRID_W, TIMESTEPS, PAUSE_TIME
 from scenario.env import GridWorld, CellType
-from scenario.moving_policy_factory import move_towards_goal
+# from scenario.moving_policy_factory import move_towards_goal
 from visualisation.render import Renderer
 
 from utils.init_map import generate_random_map
@@ -18,14 +18,11 @@ plt.ion()
 entities = []        # save static properties
 
 layout = {
-    CellType.DEPOT: {"count": 1, "size": (3, 3),},
-    CellType.WORKSHOP: {"count": 1,"size": (2, 2),},
-    CellType.PARKING: {"count": 1,"size": (2, 2),},
-    CellType.HAZARD: {"count": 1,"size": (1, 1),}
+    CellType.DEPOT: [{"count": 1, "size": (3, 3),}, {"count": 1, "size": (5, 3),},],
+    CellType.WORKSHOP: [{"count": 2,"size": (2, 2),}],
+    CellType.PARKING: [{"count": 1,"size": (2, 2),}],
+    CellType.HAZARD: [{"count": 0,"size": (1, 1),}]
     }    
-
-# TO DO !!!!!!!!!!!!!!!!!!! count = 0 --> wrong color when rendering
-
 
 map, entities = generate_random_map(GRID_H, GRID_W, layout)
 
@@ -36,14 +33,14 @@ map, entities = generate_random_map(GRID_H, GRID_W, layout)
 # create agent
 # --------------------------
 agent_specs = {
-    "worker": {"count": 1, "policy": move_towards_goal},
-    "vehicle": {"count": 0}
+    "worker": [{"count": 1, "policy": "move_towards_goal"}, {"count": 2}],
+    "vehicle": [{"count": 1, "goal_chain":"vehicle_default"}]
     }
 
 agents = generate_random_agents(map, agent_specs)
 
-# for a in agents:
-#     print(a)
+for a in agents:
+    print(a)
 
 # --------------------------
 # create environment

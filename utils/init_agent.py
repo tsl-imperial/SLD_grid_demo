@@ -45,6 +45,7 @@ def generate_random_agents(map, agent_specs):
     
     h, w = map.shape
     agents = []
+    type_counters = {a:0 for a in agent_specs.keys()}
     occupied = set()
 
     for agent_type, specs in agent_specs.items():
@@ -94,7 +95,8 @@ def generate_random_agents(map, agent_specs):
                     # if map[x, y] != CellType.EMPTY or (x, y) in occupied:
                     #    raise ValueError(f"Specified pos {(x, y)} for {agent_type} is not empty")
 
-                name = f"{agent_type}_{i}"
+                name = f"{agent_type}_{type_counters[agent_type]}"
+                type_counters[agent_type] += 1
 
                 agent_params = {k: extra_kwargs[k][i] for k in extra_kwargs}
                 agent_params["agent_type"] = agent_type

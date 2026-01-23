@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from matplotlib.colors import ListedColormap, BoundaryNorm
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.table import Table
@@ -36,10 +36,20 @@ class Renderer:
         self.ax = self.fig.add_axes([0.03, 0.1, 0.6, 0.75])
 
         # background
-        cmap = ListedColormap([CELL_COLORS[i] for i in range(len(CELL_COLORS))])
+        # cmap = ListedColormap([CELL_COLORS[i] for i in range(len(CELL_COLORS))])
+
+        colors = [CELL_COLORS[i] for i in range(len(CELL_COLORS))]
+        cmap = ListedColormap(colors)
+
+        norm = BoundaryNorm(
+            boundaries=range(len(colors)+1),  # 0,1,2,3,4,5
+            ncolors=len(colors)
+        )
+
         self.img = self.ax.imshow(
             grid,
             cmap=cmap,
+            norm = norm,
             origin='upper',
             interpolation='none'
         )

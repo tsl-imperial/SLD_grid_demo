@@ -87,4 +87,5 @@ def generate_random_map(map_rows, map_cols, layout=None):
                 entity = StaticEntity(cell_type, x, y, w, h, name)
                 entities.append(entity)
 
+
     return grid, entities

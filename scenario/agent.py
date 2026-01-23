@@ -1,8 +1,7 @@
-import random
 from enum import Enum
 
-from scenario.goal_factory import get_goals, append_new_goal
-from scenario.moving_policy_factory import move_towards_goal
+from scenario.goal_factory import build_init_goal, build_active_goal
+from scenario.moving_policy_factory import build_policy
 
 from config import SIM_TYPE
 
@@ -12,7 +11,7 @@ class AgentStatus(Enum):
     DONE = 2          # complete all goals (keep current position)
 
 class Agent:
-    def __init__(self, agent_type, pos, map, name=None, policy=move_towards_goal):
+    def __init__(self, agent_type, pos, map, name=None, goal_chain="worker_default", active_goal_chain=None, policy="move_towards_goal"):
         """
         agent_type: "worker" or "vehicle"
         pos: tuple (x, y)
@@ -22,14 +21,17 @@ class Agent:
 
         self.pos = pos
         self.map = map
-
-        self.goals = get_goals(self)     # ultimate goals for finite sim/initial goals for infinite sim
+        self.goal_chain = goal_chain
+        self.active_goal_chain = self.goal_chain
+        self.goals = build_init_goal(self, goal_chain)
+        # self.goals = get_goals(self)     # ultimate goals for finite sim/initial goals for infinite sim
+        
         self.current_goal_idx = 0
         self.status = AgentStatus.MOVING
         self.execute_timer = 0  # record the duration at executing phase
 
         self.name = name        # required for evaluation and rendering
-        self.policy = policy
+        self.policy = build_policy(policy)
     
     def __repr__(self):
         return f"{self.name}, pos={self.pos}, policy={self.policy.__name__}"
@@ -69,9 +71,14 @@ class Agent:
                 if self.current_goal is None:
                     if SIM_TYPE == "INFINITE":
                         # generate additional goals and append to initial goals
-                        new_goal = append_new_goal(self)
-                        self.goals.append(new_goal)
-
+                        # new_goal = append_new_goal(self)
+                        # self.goals.append(new_goal)
+                        new_goal = build_active_goal(self, self.active_goal_chain)
+                        if new_goal:
+                            for g in new_goal:
+                                self.goals.append(g)
+                            #self.goals.append(new_goal)
+                            
                         self.status = AgentStatus.MOVING
 
                     else:

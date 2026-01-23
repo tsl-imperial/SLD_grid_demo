@@ -1,66 +1,97 @@
 import random
-from scenario.env import CellType
 from config import DEFAULT_EXEC_STEPS
+from scenario.env import CellType
 
 
 class Goal:
-    def __init__(self, pos, executing_steps=2):
+    def __init__(self, pos, executing_steps=DEFAULT_EXEC_STEPS):
         self.pos = pos
         self.executing_steps = executing_steps
 
     def is_satisfied(self, agent):
         return agent.pos == self.pos
+
+
+# --------------------------
+# Goal Chains
+# --------------------------
+
+# for both finite and infinite simulation
+# a goal chain = a list of Goal objects (pos, executing_steps)
+
+INIT_GOAL_CHAIN = {
+    "worker_default": [
+        ([CellType.WORKSHOP], 5)],
+
+    "vehicle_default": [
+        ([CellType.DEPOT], 5),
+        ([CellType.WORKSHOP], 5),
+        ([CellType.PARKING], 10)],
+
+    # --> add various chains here <--
+    # ......
+
+}
+
+# for infinite simulation --> new goal generation strategy
+ACTIVE_GOAL_CHAIN = {
+
+    "worker_default": [
+        ([CellType.WORKSHOP], 5)],
     
+    "vehicle_default": [
+        ([CellType.DEPOT], 5),
+        ([CellType.WORKSHOP], 5),
+        ([CellType.PARKING], 10)],
 
-def generate_goals_by_type(map, cell_types, default_executing_steps=DEFAULT_EXEC_STEPS):
-    goals = []
-    rows, cols = map.shape
-    print(0)
-    for ctype in cell_types:
-        valid_cells = [(x, y) for x in range(rows) for y in range(cols) if map[x, y] == ctype]
-        print(valid_cells)
-        if valid_cells:
-            pos = random.choice(valid_cells)
-            goals.append(Goal(pos, executing_steps=default_executing_steps))
-    return goals
+    # --> add various chains here <--
+    # ......
 
-def generate_new_goal(map, cell_types, default_executing_steps=DEFAULT_EXEC_STEPS):
-    rows, cols = map.shape
-    valid_cells = []
+}
 
-    for ctype in cell_types:
-        valid_cells.extend(
-            [(x, y) for x in range(rows) for y in range(cols) if map[x, y] == ctype]
-        )
-    
+
+# ----------------
+# Goal Generation
+# ----------------
+
+def sample_goal(grid, cell_types, executing_steps):
+    """
+    return a Goal object
+    --> specify a target cell from all valid cells as the goal pas
+    """
+    rows, cols = grid.shape
+    valid_cells = [
+        (x, y) 
+        for x in range(rows) 
+        for y in range(cols) 
+        if grid[x, y] in cell_types
+    ]
+
     if not valid_cells:
         return None
-    
+
     pos = random.choice(valid_cells)
-    return Goal(pos, executing_steps=default_executing_steps)
+    return Goal(pos, executing_steps)
 
 
-def get_goals(agent, default_executing_steps=DEFAULT_EXEC_STEPS):
-    """
-    return list of Goal objects
-    """
-    if agent.agent_type == "worker":
-        return generate_goals_by_type(agent.map, [CellType.WORKSHOP], default_executing_steps)
-    elif agent.agent_type == "vehicle":
-        return generate_goals_by_type(agent.map, [CellType.DEPOT, CellType.WORKSHOP, CellType.PARKING], default_executing_steps)
-    else:
-        return []
+def build_init_goal(agent, chain_name):
+    chain = INIT_GOAL_CHAIN.get(chain_name, [])
+    goals = []
 
-def append_new_goal(agent):
-    """
-    for infinite simulation
-    """
-    if agent.agent_type == "worker":
-        cell_types = [CellType.WORKSHOP, CellType.DEPOT]     # define potential goals
-        new_goal = generate_new_goal(agent.map, cell_types, DEFAULT_EXEC_STEPS)
-        print(new_goal.pos)
-    if agent.agent_type == "vehicle":
-        cell_types = [CellType.DEPOT, CellType.WORKSHOP, CellType.PARKING]
-        new_goal = generate_new_goal(agent.map, cell_types, DEFAULT_EXEC_STEPS)
-    
-    return new_goal
+    for cell_types, steps in chain:
+        goal = sample_goal(agent.map, cell_types, steps)
+        if goal:
+            goals.append(goal)
+
+    return goals
+
+def build_active_goal(agent, chain_name):
+    chain = ACTIVE_GOAL_CHAIN.get(chain_name, [])
+    goals = []
+
+    for cell_types, steps in chain:
+        goal = sample_goal(agent.map, cell_types, steps)
+        if goal:
+            goals.append(goal)
+
+    return goals
