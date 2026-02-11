@@ -12,9 +12,9 @@ The project is intended as a foundation for future reinforcement learning-based 
 - Install dependencies via `requirements.txt`
 
 
-```markdown
-
 ## Structure
+
+```markdown
 
 grid_demo/
 │
@@ -26,6 +26,8 @@ grid_demo/
 ├── config.py
 ├── README.md
 └── requirements.txt
+
+```
 
 
 ## Features
