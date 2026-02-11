@@ -12,11 +12,13 @@ The project is intended as a foundation for future reinforcement learning-based 
 - Install dependencies via `requirements.txt`
 
 
+```markdown
+
 ## Structure
 
 grid_demo/
 │
-├── evaluation/               # performace metrics
+├── evaluation/               # performance metrics
 ├── scenario/                 # grid map and agent definition
 ├── utils/                    # scenario initialisation
 ├── visualisation/
